@@ -37,7 +37,7 @@ if (hamburger && nav) {
   });
 }
 
-// Contact form AJAX submit to backend
+// Contact form AJAX submit to deployed backend
 const contactForm = document.querySelector('.contact form');
 if (contactForm) {
   contactForm.addEventListener('submit', async function(e) {
@@ -45,19 +45,19 @@ if (contactForm) {
     const formData = new FormData(contactForm);
     const data = Object.fromEntries(formData.entries());
     try {
-      const res = await fetch('http://localhost:3001/contact', {
+      const res = await fetch('https://about-backend-io1n.onrender.com/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
       if (res.ok) {
-        alert('Thank you for contacting me! I will get back to you soon.');
+        alert('✅ Thank you for contacting me! I will get back to you soon.');
         contactForm.reset();
       } else {
-        alert('There was an error. Please try again.');
+        alert('❌ There was an error. Please try again.');
       }
     } catch (err) {
-      alert('Could not connect to server.');
+      alert('⚠️ Could not connect to the server. Please try again later.');
     }
   });
 }
