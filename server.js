@@ -3,14 +3,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const cors = require('cors');
-const path = require('path'); // <-- Add this line
+const path = require('path');
 
 // Create Express app
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
-// Middleware
-app.use(cors());
+// Middleware with CORS for your GitHub Pages domain
+app.use(cors({
+    origin: 'https://harikesh0501.github.io',
+    methods: ['POST']
+}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -22,21 +25,16 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// MySQL database connection
-const db = mysql.createConnection({
-    host: 'localhost',
+// MySQL database connection using Railway internal host
+const db = mysql.createPool({
+    host: 'mysql.railway.internal',
     user: 'root',
-    password: 'Hetu@512007', // ⚠️ Never hardcode passwords in production
-    database: 'aboutdb'
-});
-
-// Connect to database
-db.connect((err) => {
-    if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return;
-    }
-    console.log('✅ Connected to MySQL');
+    password: 'LswueuXLhqFqzfOquVIXepabDtchL0bk',
+    database: 'railway',
+    port: 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
 // API route: POST /contact
@@ -55,6 +53,11 @@ app.post('/contact', (req, res) => {
         }
         res.status(200).send('✅ Message received and saved to database!');
     });
+});
+
+// Health Check route
+app.get('/health', (req, res) => {
+    res.send('Server is healthy and running');
 });
 
 // Start the server
